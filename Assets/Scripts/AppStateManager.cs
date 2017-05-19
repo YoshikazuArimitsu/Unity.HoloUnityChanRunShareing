@@ -103,7 +103,7 @@ public class AppStateManager : Singleton<AppStateManager>
                     GestureManager.Instance.OverrideFocusedObject = shootHandler;
 
                     Transform anchor = ImportExportAnchorManager.Instance.gameObject.transform;
-                    Instantiate(AnchorPrefab_, anchor.position, new Quaternion());
+                    Instantiate(AnchorPrefab_, anchor.position, anchor.rotation);
                     //anchor.transform.position;
 
                     // Anchor visible
