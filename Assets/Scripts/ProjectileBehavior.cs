@@ -48,7 +48,7 @@ public class ProjectileBehavior : MonoBehaviour
         StartTime = Time.time;
 
         LaunchProjectile();
-	}
+    }
 
     protected virtual void LaunchProjectile()
     {
@@ -61,7 +61,7 @@ public class ProjectileBehavior : MonoBehaviour
     void Update ()
     {
         UpdateProjectile();
-	}
+    }
     
     protected virtual void UpdateProjectile()
     {

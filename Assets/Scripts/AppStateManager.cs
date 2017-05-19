@@ -12,7 +12,7 @@ public class AppStateManager : Singleton<AppStateManager>
     public enum AppState
     {
         Starting = 0,
-        PickingAvatar,
+        //PickingAvatar,
         WaitingForAnchor,
         WaitingForStageTransform,
         Ready
@@ -35,7 +35,8 @@ public class AppStateManager : Singleton<AppStateManager>
         }
 
         // We start in the 'picking avatar' mode.
-        CurrentAppState = AppState.PickingAvatar;
+        //CurrentAppState = AppState.PickingAvatar;
+        CurrentAppState = AppState.WaitingForAnchor;
 
         // Spatial mapping should be disabled when we start up so as not
         // to distract from the avatar picking.
@@ -43,17 +44,17 @@ public class AppStateManager : Singleton<AppStateManager>
         SpatialMappingManager.Instance.gameObject.SetActive(false);
 
         // On device we start by showing the avatar picker.
-        PlayerAvatarStore.Instance.SpawnAvatarPicker();
+        //PlayerAvatarStore.Instance.SpawnAvatarPicker();
     }
 
     public void ResetStage()
     {
         // If we fall back to waiting for anchor, everything needed to 
         // get us into setting the target transform state will be setup.
-        if (CurrentAppState != AppState.PickingAvatar)
-        {
-            CurrentAppState = AppState.WaitingForAnchor;
-        }
+        //if (CurrentAppState != AppState.PickingAvatar)
+        //{
+        //    CurrentAppState = AppState.WaitingForAnchor;
+        //}
 
         // Reset the underworld.
         if (UnderworldBase.Instance)
@@ -66,13 +67,13 @@ public class AppStateManager : Singleton<AppStateManager>
     {
         switch (CurrentAppState)
         {
-            case AppState.PickingAvatar:
-                // Avatar picking is done when the avatar picker has been dismissed.
-                if (PlayerAvatarStore.Instance.PickerActive == false)
-                {
-                    CurrentAppState = AppState.WaitingForAnchor;
-                }
-                break;
+            //case AppState.PickingAvatar:
+            //    // Avatar picking is done when the avatar picker has been dismissed.
+            //    if (PlayerAvatarStore.Instance.PickerActive == false)
+            //    {
+            //        CurrentAppState = AppState.WaitingForAnchor;
+            //    }
+            //    break;
             case AppState.WaitingForAnchor:
                 // Once the anchor is established we need to run spatial mapping for a 
                 // little while to build up some meshes.

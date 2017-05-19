@@ -70,7 +70,7 @@ public class HologramPlacement : Singleton<HologramPlacement>
         CustomMessages.Instance.SendResetStage();
 
         // And we need to reset the object to its start animation state.
-        GetComponent<EnergyHubBase>().ResetAnimation();
+        //GetComponent<EnergyHubBase>().ResetAnimation();
     }
 
     /// <summary>
@@ -86,12 +86,16 @@ public class HologramPlacement : Singleton<HologramPlacement>
         }
     }
 
+    private GameObject mesh_root() {
+        return transform.Find("mesh_root").GetComponent<GameObject>();
+    }
+
     /// <summary>
     /// Turns off all renderers for the model.
     /// </summary>
     void DisableModel()
     {
-        foreach (MeshRenderer renderer in gameObject.GetComponentsInChildren<MeshRenderer>())
+        foreach (MeshRenderer renderer in mesh_root().GetComponentsInChildren<MeshRenderer>())
         {
             if (renderer.enabled)
             {
@@ -100,7 +104,7 @@ public class HologramPlacement : Singleton<HologramPlacement>
             }
         }
 
-        foreach (MeshCollider collider in gameObject.GetComponentsInChildren<MeshCollider>())
+        foreach (MeshCollider collider in mesh_root().GetComponentsInChildren<MeshCollider>())
         {
             collider.enabled = false;
         }
@@ -116,7 +120,7 @@ public class HologramPlacement : Singleton<HologramPlacement>
             renderer.enabled = true;
         }
 
-        foreach (MeshCollider collider in gameObject.GetComponentsInChildren<MeshCollider>())
+        foreach (MeshCollider collider in mesh_root().GetComponentsInChildren<MeshCollider>())
         {
             collider.enabled = true;
         }
@@ -129,7 +133,7 @@ public class HologramPlacement : Singleton<HologramPlacement>
         // Wait till users pick an avatar to enable renderers.
         if (disabledRenderers.Count > 0)
         {
-            if (!PlayerAvatarStore.Instance.PickerActive &&
+            if (/*!PlayerAvatarStore.Instance.PickerActive && */
             ImportExportAnchorManager.Instance.AnchorEstablished)
             {
                 // After which we want to start rendering.
@@ -140,7 +144,7 @@ public class HologramPlacement : Singleton<HologramPlacement>
                 {
                     // This triggers the animation sequence for the model and
                     // puts the cool materials on the model.
-                    GetComponent<EnergyHubBase>().SendMessage("OnSelect");
+                    //GetComponent<EnergyHubBase>().SendMessage("OnSelect");
                 }
             }
         }
@@ -152,48 +156,60 @@ public class HologramPlacement : Singleton<HologramPlacement>
 
     Vector3 ProposeTransformPosition()
     {
+        //Vector3 retval;
+        //// We need to know how many users are in the experience with good transforms.
+        //Vector3 cumulatedPosition = Camera.main.transform.position;
+        //int playerCount = 1;
+        //foreach (RemotePlayerManager.RemoteHeadInfo remoteHead in RemotePlayerManager.Instance.remoteHeadInfos)
+        //{
+        //    if (remoteHead.Anchored && remoteHead.Active)
+        //    {
+        //        playerCount++;
+        //        cumulatedPosition += remoteHead.HeadObject.transform.position;
+        //    }
+        //}
+
+        //// If we have more than one player ...
+        //if (playerCount > 1)
+        //{
+        //    // Put the transform in between the players.
+        //    retval = cumulatedPosition / playerCount;
+        //    RaycastHit hitInfo;
+
+        //    // And try to put the transform on a surface below the midpoint of the players.
+        //    if (Physics.Raycast(retval, Vector3.down, out hitInfo, 5, SpatialMappingManager.Instance.LayerMask))
+        //    {
+        //        retval = hitInfo.point;
+        //    }
+        //}
+        //// If we are the only player, have the model act as the 'cursor' ...
+        //else
+        //{
+        //    // We prefer to put the model on a real world surface.
+        //    RaycastHit hitInfo;
+
+        //    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 30, SpatialMappingManager.Instance.LayerMask))
+        //    {
+        //        retval = hitInfo.point;
+        //    }
+        //    else
+        //    {
+        //        // But if we don't have a ray that intersects the real world, just put the model 2m in
+        //        // front of the user.
+        //        retval = Camera.main.transform.position + Camera.main.transform.forward * 2;
+        //    }
+        //}
+        //return retval;
+
         Vector3 retval;
-        // We need to know how many users are in the experience with good transforms.
-        Vector3 cumulatedPosition = Camera.main.transform.position;
-        int playerCount = 1;
-        foreach (RemotePlayerManager.RemoteHeadInfo remoteHead in RemotePlayerManager.Instance.remoteHeadInfos)
-        {
-            if (remoteHead.Anchored && remoteHead.Active)
-            {
-                playerCount++;
-                cumulatedPosition += remoteHead.HeadObject.transform.position;
-            }
-        }
+        RaycastHit hitInfo;
 
-        // If we have more than one player ...
-        if (playerCount > 1)
-        {
-            // Put the transform in between the players.
-            retval = cumulatedPosition / playerCount;
-            RaycastHit hitInfo;
-
-            // And try to put the transform on a surface below the midpoint of the players.
-            if (Physics.Raycast(retval, Vector3.down, out hitInfo, 5, SpatialMappingManager.Instance.LayerMask))
-            {
-                retval = hitInfo.point;
-            }
-        }
-        // If we are the only player, have the model act as the 'cursor' ...
-        else
-        {
-            // We prefer to put the model on a real world surface.
-            RaycastHit hitInfo;
-
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 30, SpatialMappingManager.Instance.LayerMask))
-            {
-                retval = hitInfo.point;
-            }
-            else
-            {
-                // But if we don't have a ray that intersects the real world, just put the model 2m in
-                // front of the user.
-                retval = Camera.main.transform.position + Camera.main.transform.forward * 2;
-            }
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 30, SpatialMappingManager.Instance.LayerMask)) {
+            retval = hitInfo.point;
+        } else {
+            // But if we don't have a ray that intersects the real world, just put the model 2m in
+            // front of the user.
+            retval = Camera.main.transform.position + Camera.main.transform.forward * 2;
         }
         return retval;
     }
@@ -204,6 +220,7 @@ public class HologramPlacement : Singleton<HologramPlacement>
         GotTransform = true;
 
         // And send it to our friends.
+        Debug.Log(string.Format("HologramPlacement, OnSelect : Pos {0}, Rot {1}", transform.localPosition, transform.localRotation));
         CustomMessages.Instance.SendStageTransform(transform.localPosition, transform.localRotation);
     }
 
@@ -223,7 +240,7 @@ public class HologramPlacement : Singleton<HologramPlacement>
         // swap its materials.
         if (disabledRenderers.Count == 0 && GotTransform == false)
         {
-            GetComponent<EnergyHubBase>().SendMessage("OnSelect");
+            //GetComponent<EnergyHubBase>().SendMessage("OnSelect");
         }
 
         GotTransform = true;
@@ -236,7 +253,7 @@ public class HologramPlacement : Singleton<HologramPlacement>
     {
         GotTransform = false;
 
-        GetComponent<EnergyHubBase>().ResetAnimation();
+        //GetComponent<EnergyHubBase>().ResetAnimation();
         AppStateManager.Instance.ResetStage();
     }
 }
