@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class TargetLauncher : MonoBehaviour {
     public GameObject TargetPrefab_;
-    private GameObject Target_;
 
 	// Use this for initialization
 	void Start () {
@@ -24,14 +23,14 @@ public class TargetLauncher : MonoBehaviour {
         }
 
         var pos = CursorManager.Instance.CursorOnHolograms.transform.position;
-        Debug.Log("SpawnTarget at " + pos);
+        //Debug.Log("SpawnTarget at " + pos);
         instantiateTarget(pos);
 
         // 
         Transform anchor = ImportExportAnchorManager.Instance.gameObject.transform;
         Vector3 v = anchor.InverseTransformPoint(pos);
         Debug.Log(string.Format("PostInstantiateTarget : Pos(AnchorLocal)={0}, Pos(MyWorld)={1}",
-               pos, v));
+               v, pos));
         CustomMessages.Instance.SendInstantiateTarget(pos);
     }
 
@@ -60,19 +59,11 @@ public class TargetLauncher : MonoBehaviour {
         instantiateTarget(v);
     }
 
-    void destroyTarget() {
-        if (Target_ != null) {
-            Destroy(Target_);
-        }
-        Target_ = null;
-
-    }
-
     void instantiateTarget(Vector3 vec) {
-        destroyTarget();
+        GameObject target = GameObject.Instantiate(TargetPrefab_, transform);
+        target.transform.position = vec;
 
-        this.Target_ = GameObject.Instantiate(TargetPrefab_);
-        this.Target_.transform.position = vec;
+        UnityChanController.Instance.SetTargetCube(target);
     }
 
 }
