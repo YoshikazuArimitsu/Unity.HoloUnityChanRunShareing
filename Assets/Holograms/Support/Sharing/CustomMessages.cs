@@ -19,6 +19,7 @@ public class CustomMessages : Singleton<CustomMessages>
         StageTransform,
         ResetStage,
         ExplodeTarget,
+        InstantiateTarget,
         Max
     }
 
@@ -225,6 +226,24 @@ public class CustomMessages : Singleton<CustomMessages>
                 MessageReliability.ReliableOrdered,
                 MessageChannel.Avatar);
         }
+    }
+
+    public void SendInstantiateTarget(Vector3 vec) {
+        // If we are connected to a session, broadcast our head info
+        if (this.serverConnection != null && this.serverConnection.IsConnected()) {
+            // Create an outgoing network message to contain all the info we want to send
+            NetworkOutMessage msg = CreateMessage((byte)TestMessageID.InstantiateTarget);
+
+            AppendVector3(msg, vec);
+
+            // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+            this.serverConnection.Broadcast(
+                msg,
+                MessagePriority.Immediate,
+                MessageReliability.Reliable,
+                MessageChannel.Avatar);
+        }
+
     }
 
     void OnDestroy()

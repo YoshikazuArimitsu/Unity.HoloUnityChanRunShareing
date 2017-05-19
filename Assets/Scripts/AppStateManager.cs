@@ -20,6 +20,7 @@ public class AppStateManager : Singleton<AppStateManager>
 
     // The object to call to make a projectile.
     GameObject shootHandler = null;
+    public GameObject AnchorPrefab_;
 
     /// <summary>
     /// Tracks the current state in the experience.
@@ -29,10 +30,16 @@ public class AppStateManager : Singleton<AppStateManager>
     void Start()
     {
         // The shootHandler shoots projectiles.
+        /*
         if (GetComponent<ProjectileLauncher>() != null)
         {
             shootHandler = GetComponent<ProjectileLauncher>().gameObject;
         }
+        */
+        if (GetComponent<TargetLauncher>() != null) {
+            shootHandler = GetComponent<TargetLauncher>().gameObject;
+        }
+
 
         // We start in the 'picking avatar' mode.
         //CurrentAppState = AppState.PickingAvatar;
@@ -94,6 +101,15 @@ public class AppStateManager : Singleton<AppStateManager>
                 {
                     CurrentAppState = AppState.Ready;
                     GestureManager.Instance.OverrideFocusedObject = shootHandler;
+
+                    Transform anchor = ImportExportAnchorManager.Instance.gameObject.transform;
+                    Instantiate(AnchorPrefab_, anchor.position, new Quaternion());
+                    //anchor.transform.position;
+
+                    // Anchor visible
+                    Debug.Log(string.Format("Change state to Ready, UnityChan.pos={0}, Anchor.pos={1}",
+                        HologramPlacement.Instance.transform.position,
+                        anchor.position));
                 }
                 break;
         }

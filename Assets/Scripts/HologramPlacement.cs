@@ -11,11 +11,12 @@ public class HologramPlacement : Singleton<HologramPlacement>
     /// The model is rendered relative to the actual anchor.
     /// </summary>
     public bool GotTransform { get; private set; }
+    private GameObject MeshRoot_;
 
     /// <summary>
     /// When the experience starts, we disable all of the rendering of the model.
     /// </summary>
-    List<MeshRenderer> disabledRenderers = new List<MeshRenderer>();
+    List<SkinnedMeshRenderer> disabledRenderers = new List<SkinnedMeshRenderer>();
 
     /// <summary>
     /// We use a voice command to enable moving the target.
@@ -24,6 +25,11 @@ public class HologramPlacement : Singleton<HologramPlacement>
 
     void Start()
     {
+        MeshRoot_ = transform.Find("mesh_root").gameObject;
+        if(MeshRoot_ == null) {
+            Debug.Log("MeshRoot is Null!!");
+        }
+
         // When we first start, we need to disable the model to avoid it obstructing the user picking a hat.
         DisableModel();
 
@@ -87,7 +93,7 @@ public class HologramPlacement : Singleton<HologramPlacement>
     }
 
     private GameObject mesh_root() {
-        return transform.Find("mesh_root").GetComponent<GameObject>();
+        return transform.Find("mesh_root").gameObject;
     }
 
     /// <summary>
@@ -95,19 +101,24 @@ public class HologramPlacement : Singleton<HologramPlacement>
     /// </summary>
     void DisableModel()
     {
-        foreach (MeshRenderer renderer in mesh_root().GetComponentsInChildren<MeshRenderer>())
-        {
-            if (renderer.enabled)
-            {
-                renderer.enabled = false;
-                disabledRenderers.Add(renderer);
-            }
-        }
+        Debug.Log("Disable models");
+        //MeshRoot_.SetActive(false);
 
-        foreach (MeshCollider collider in mesh_root().GetComponentsInChildren<MeshCollider>())
-        {
-            collider.enabled = false;
-        }
+        //foreach (SkinnedMeshRenderer renderer in mesh_root().GetComponentsInChildren<SkinnedMeshRenderer>())
+        //{
+            
+        //    Debug.Log("Disable renderer");
+        //    if (renderer.enabled)
+        //    {
+        //        renderer.enabled = false;
+        //        disabledRenderers.Add(renderer);
+        //    }
+        //}
+
+        //foreach (MeshCollider collider in mesh_root().GetComponentsInChildren<MeshCollider>())
+        //{
+        //    collider.enabled = false;
+        //}
     }
 
     /// <summary>
@@ -115,17 +126,19 @@ public class HologramPlacement : Singleton<HologramPlacement>
     /// </summary>
     void EnableModel()
     {
-        foreach (MeshRenderer renderer in disabledRenderers)
-        {
-            renderer.enabled = true;
-        }
+        //MeshRoot_.SetActive(true);
 
-        foreach (MeshCollider collider in mesh_root().GetComponentsInChildren<MeshCollider>())
-        {
-            collider.enabled = true;
-        }
+        //foreach (SkinnedMeshRenderer renderer in disabledRenderers)
+        //{
+        //    renderer.enabled = true;
+        //}
 
-        disabledRenderers.Clear();
+        //foreach (MeshCollider collider in mesh_root().GetComponentsInChildren<MeshCollider>())
+        //{
+        //    collider.enabled = true;
+        //}
+
+        //disabledRenderers.Clear();
     }
 
     void Update()
