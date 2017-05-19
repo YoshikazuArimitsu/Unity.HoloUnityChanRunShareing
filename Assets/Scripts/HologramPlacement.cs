@@ -87,10 +87,6 @@ public class HologramPlacement : Singleton<HologramPlacement>
         }
     }
 
-    private GameObject mesh_root() {
-        return transform.Find("mesh_root").gameObject;
-    }
-
     /// <summary>
     /// Turns off all renderers for the model.
     /// </summary>
@@ -98,21 +94,21 @@ public class HologramPlacement : Singleton<HologramPlacement>
     {
         Debug.Log("Disable models");
 
-        foreach (SkinnedMeshRenderer renderer in mesh_root().GetComponentsInChildren<SkinnedMeshRenderer>()) {
+        foreach (SkinnedMeshRenderer renderer in gameObject.GetComponentsInChildren<SkinnedMeshRenderer>()) {
             if (renderer.enabled) {
                 renderer.enabled = false;
                 disabledSkinnedRenderers.Add(renderer);
             }
         }
 
-        foreach (MeshRenderer renderer in mesh_root().GetComponentsInChildren<MeshRenderer>()) {
+        foreach (MeshRenderer renderer in gameObject.GetComponentsInChildren<MeshRenderer>()) {
             if (renderer.enabled) {
                 renderer.enabled = false;
                 disabledRenderers.Add(renderer);
             }
         }
 
-        foreach (MeshCollider collider in mesh_root().GetComponentsInChildren<MeshCollider>()) {
+        foreach (MeshCollider collider in gameObject.GetComponentsInChildren<MeshCollider>()) {
             collider.enabled = false;
         }
     }
@@ -129,7 +125,7 @@ public class HologramPlacement : Singleton<HologramPlacement>
             renderer.enabled = true;
         }
 
-        foreach (MeshCollider collider in mesh_root().GetComponentsInChildren<MeshCollider>()) {
+        foreach (MeshCollider collider in gameObject.GetComponentsInChildren<MeshCollider>()) {
             collider.enabled = true;
         }
 
@@ -244,6 +240,8 @@ public class HologramPlacement : Singleton<HologramPlacement>
 
         transform.localPosition = CustomMessages.Instance.ReadVector3(msg);
         transform.localRotation = CustomMessages.Instance.ReadQuaternion(msg);
+
+        Debug.Log(string.Format("OnStageTransfrom, localPosition:{0}", transform.localPosition));
 
         // The first time, we'll want to send the message to the model to do its animation and
         // swap its materials.

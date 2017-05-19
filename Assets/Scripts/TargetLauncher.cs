@@ -24,14 +24,18 @@ public class TargetLauncher : MonoBehaviour {
 
         var pos = CursorManager.Instance.CursorOnHolograms.transform.position;
         //Debug.Log("SpawnTarget at " + pos);
-        instantiateTarget(pos);
+        var o = instantiateTarget(pos);
 
         // 
-        Transform anchor = ImportExportAnchorManager.Instance.gameObject.transform;
-        Vector3 v = anchor.InverseTransformPoint(pos);
+        //Transform anchor = ImportExportAnchorManager.Instance.gameObject.transform;
+        //Vector3 v = anchor.InverseTransformPoint(pos);
+        //Debug.Log(string.Format("PostInstantiateTarget : Pos(AnchorLocal)={0}, Pos(MyWorld)={1}",
+        //       v, pos));
+        //CustomMessages.Instance.SendInstantiateTarget(pos);
+
         Debug.Log(string.Format("PostInstantiateTarget : Pos(AnchorLocal)={0}, Pos(MyWorld)={1}",
-               v, pos));
-        CustomMessages.Instance.SendInstantiateTarget(pos);
+               o.transform.localPosition, pos));
+        CustomMessages.Instance.SendInstantiateTarget(o.transform.localPosition);
     }
 
     /// <summary>
@@ -59,11 +63,13 @@ public class TargetLauncher : MonoBehaviour {
         instantiateTarget(v);
     }
 
-    void instantiateTarget(Vector3 vec) {
-        GameObject target = GameObject.Instantiate(TargetPrefab_, transform);
+    GameObject instantiateTarget(Vector3 vec) {
+        Transform anchor = ImportExportAnchorManager.Instance.gameObject.transform;
+        GameObject target = Instantiate(TargetPrefab_, anchor);
         target.transform.position = vec;
 
         UnityChanController.Instance.SetTargetCube(target);
+        return target;
     }
 
 }
